@@ -22,6 +22,8 @@ public class JobsService {
 	@Autowired
 	private Scheduler scheduler;
 	
+	private static final String GROUP = "DEFAULT";  
+	
 	public void executeJob(JobExecutionContext context) {
 		log.info("The job " + context.getJobDetail().getKey().getName() +" has begun... [" + context.getFireTime() + "]");
 
@@ -32,7 +34,7 @@ public class JobsService {
 	public void rescheduleJob(MyJob myJob) throws SchedulerException {
 		if (myJob.getTriggerName() != null || myJob.getCron() != null) {
 			if (org.quartz.CronExpression.isValidExpression(myJob.getCron())) {
-				Trigger oldTrigger = scheduler.getTrigger(triggerKey(myJob.getTriggerName(), "DEFAULT"));
+				Trigger oldTrigger = scheduler.getTrigger(triggerKey(myJob.getTriggerName(), GROUP));
 
 				// obtain a builder that would produce the trigger
 				@SuppressWarnings("rawtypes")
@@ -48,10 +50,10 @@ public class JobsService {
 	}
 
 	public void pauseJob(String jobName) throws SchedulerException {
-		scheduler.pauseJob(jobKey(jobName, "DEFAULT"));
+		scheduler.pauseJob(jobKey(jobName, GROUP));
 	}
 
 	public void resumeJob(String jobName) throws SchedulerException {
-		scheduler.resumeJob(jobKey(jobName, "DEFAULT"));
+		scheduler.resumeJob(jobKey(jobName, GROUP));
 	}
 }
